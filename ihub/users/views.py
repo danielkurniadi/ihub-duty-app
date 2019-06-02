@@ -11,7 +11,7 @@ def redirect_login(request):
     if request.method == 'GET':
         # @permission(IsAuthenticated)
         if request.user.is_authenticated:
-            return redirect('users:profile')
+            return redirect('users:home')
         return redirect('/accounts/login/')
 
     # ERROR for other method
@@ -35,4 +35,26 @@ class HomeView(DetailView):
         return self.request.user
 
 
+def signup(request):
+    """Render forms and page for sign up and create new user 
+        with basic permission level.
+    """
+    # POST
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            # create, authenticate, and login user
+            user = form.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(request, email=user.email, password=raw_password)
+            if user:
+                # successful authentication
+                login(request, user)
+                return redirect('users:home')
 
+    # GET (assumed)
+    else:
+        form = SignUpForm()
+
+    # signup fail or first try signup
+    return render(request, 'signup.html', {'form': form})
