@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from django.contrib.auth import login, authenticate
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def redirect_login(request):
     """Redirect users to login page if not logged in.
@@ -9,7 +9,7 @@ def redirect_login(request):
     """
     # GET
     if request.method == 'GET':
-        # @permission(IsAuthenticated)
+        # same as permission(IsAuthenticated)
         if request.user.is_authenticated:
             return redirect('users:home')
         return redirect('/accounts/login/')
@@ -26,8 +26,8 @@ def redirect_login(request):
         )
 
 
-class HomeView(DetailView):
-    """Render user profile page. 
+class HomeView(LoginRequiredMixin, DetailView):
+    """Render user home page. 
     """
     template_name = 'home.html'
 
