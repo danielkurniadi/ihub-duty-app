@@ -22,8 +22,8 @@ class Duty(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, 
         blank=True, null=True)
 
-    behalf = models.ForeignKey(User, on_delete=models.SET_NULL,
-        blank=True, null=True, related_name='delegated_duty_set')
+    debtee = models.ForeignKey(User, on_delete=models.SET_NULL,
+        blank=True, null=True, related_name='duty_debt_set')
 
     duty_start = models.DateTimeField(editable=False)
     task1_start = models.DateTimeField(editable=False)
