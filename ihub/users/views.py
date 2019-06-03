@@ -3,6 +3,13 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from users.forms import SignUpForm
+
+
+########################################
+# Login
+########################################
+
 def redirect_login(request):
     """Redirect users to login page if not logged in.
         If logged in, allow access and go to their profile page.
@@ -26,6 +33,10 @@ def redirect_login(request):
         )
 
 
+########################################
+# User pages
+########################################
+
 class HomeView(LoginRequiredMixin, DetailView):
     """Render user home page. 
     """
@@ -34,6 +45,10 @@ class HomeView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
+
+########################################
+# Sign up 
+########################################
 
 def signup(request):
     """Render forms and page for sign up and create new user 
