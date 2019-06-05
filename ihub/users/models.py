@@ -18,7 +18,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             email=email,
             matric=matric,
-            is_staff=is_staff,
             is_active=True,
             is_staff=is_staff,
             is_superuser=is_superuser,
@@ -46,7 +45,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True)
     name = models.CharField(max_length=254, blank=False)
-    matric = models.CharField(max_length=9, unique=True, blank=False)
+    matric = models.CharField(max_length=10, unique=True, blank=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -55,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['matric']
 
     objects = UserManager()
 
@@ -67,5 +66,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __eq__(self, other):
         if isinstance(other, User):
-            return (self.email == other.email) and (self.matric = other.matric)
+            return (self.email == other.email) and (self.matric == other.matric)
         return False
