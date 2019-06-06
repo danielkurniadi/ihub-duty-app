@@ -21,12 +21,12 @@ class DutyTests(TestCase, RandomSupport):
         pass
 
     def test_create_zombie_duty(self):
-        """Test create zombie duty (w/o user and behalf)
+        """Test create zombie duty (w/o user and debtee)
         """
         # initially no duty created
         self.assertEqual(Duty.objects.count(), 0)
 
-        # create new Duty without user nor behalf
+        # create new Duty without user nor debtee
         duty = Duty.objects.create()
 
         # verify duty count increases by 1
@@ -35,17 +35,17 @@ class DutyTests(TestCase, RandomSupport):
         # verify default duty timings
         self.verify_default_duty_timings(duty)
 
-        # verify no user nor behalf at the moment
+        # verify no user nor debtee at the moment
         self.assertIsNone(duty.user)
-        self.assertIsNone(duty.behalf)
+        self.assertIsNone(duty.debtee)
 
     def test_create_duty_with_user(self):
-        """Test create duty with user and without behalf
+        """Test create duty with user and without debtee
         """
         # initially no duty created
         self.assertEqual(Duty.objects.count(), 0)
 
-        # create new Duty with user but no behalf
+        # create new Duty with user but no debtee
         user = self.generate_ihub_user()
         duty = Duty.objects.create(user=user)
 
@@ -61,32 +61,33 @@ class DutyTests(TestCase, RandomSupport):
         # verify default duty timings
         self.verify_default_duty_timings(duty)
 
-        # verify duty has no behalf (not a subtitute), and user has not delegated any duty
-        self.assertIsNone(duty.behalf)
-        self.assertEqual(user.delegated_duty_set.count(), 0)
+        # verify duty has no debtee (not a subtitute), and user has not debted any duty
+        self.assertIsNone(duty.debtee)
+        self.assertEqual(user.duty_debt_set.count(), 0)
 
-    def test_create_empty_delegated_duty(self):
-        """Test user can delegate duty to no one. Delegated duty is empty
-        since no user is taking the responsibility of the delegated duty.
+    def test_create_anonymous_duty_debt(self):
+        """Test user can sell duty debt to no one. Duty debt has anonymous owner
+        since no one is buying the duty debt.
         """
-        user = self.generate_ihub_user()
+        debtee = self.generate_ihub_user()
 
         # verify user has no duty previously
-        self.assertEqual(user.delegated_duty_set.count(), 0)
+        self.assertEqual(debtee.duty_debt_set.count(), 0)
 
-        # create delegated duty
-        delegated_duty = user.delegated_duty_set.create()
-        self.assertEqual(user.delegated_duty_set.count(), 1)
+        # create debted duty
+        debted_duty = debtee.duty_debt_set.create()
+        duty_id = debted_duty.id
+        self.assertEqual(debtee.duty_debt_set.count(), 1)
 
         # verify duty
         self.assertEqual(
-            delegated_duty, 
-            user.delegated_duty_set.get(pk=delegated_duty.id)
+            debted_duty, 
+            debtee.duty_debt_set.get(pk=duty_id)
         )
 
     def test_user_create_add_multiple_duties(self):
         """Test user object can create and have multiple duties,
-        can delegate duty to other user, or take/delegated a duty from others.
+        can indebting duties, or sell duty debt.
         """
         user = self.generate_ihub_user()
 
@@ -101,11 +102,11 @@ class DutyTests(TestCase, RandomSupport):
         user2 = self.generate_ihub_user()
         user3 = self.generate_ihub_user()
 
-        # user2 & user3 create delegated duty
-        duty2 = user2.delegated_duty_set.create()
-        duty3 = user3.delegated_duty_set.create()
+        # user2 & user3 create debted duty
+        duty2 = user2.duty_debt_set.create()
+        duty3 = user3.duty_debt_set.create()
 
-        # delegated duties are assigned to user
+        # indebted duties are sold to debtor user
         user.duty_set.add(duty2)
         user.duty_set.add(duty3)
 
@@ -115,9 +116,9 @@ class DutyTests(TestCase, RandomSupport):
         duty2 = user.duty_set.get(pk=duty2.id)
         duty3 = user.duty_set.get(pk=duty3.id)
 
-        # verify user2 & user3 are behalfed by user
-        self.assertEqual(duty2.behalf, user2)
-        self.assertEqual(duty3.behalf, user3)
+        # verify user2 & user3 are indebted by user
+        self.assertEqual(duty2.debtee, user2)
+        self.assertEqual(duty3.debtee, user3)
 
     def test_force_end_duty(self):
         """Test force warp duty_end to now works and mark duty as finished
@@ -139,18 +140,114 @@ class DutyTests(TestCase, RandomSupport):
         """Test deleting zombie duty works. Accessing deleted duty by id will
         raise Duty.DoesNotExist exceptions.
         """
-        pass
+        # initially no duty
+        self.assertEqual(Duty.objects.count(), 0)
+        
+        duty = Duty.objects.create()
+        duty_id = duty.id
+        
+        # verify duty is created
+        self.assertEqual(Duty.objects.count(), 1)
+        Duty.objects.get(pk=duty_id)
+
+        # Step 1: delete duty
+        duty.delete()
+        
+        # Step 2: verify no longer can access duty from db by pk
+        with self.assertRaises(Duty.DoesNotExist):
+            Duty.objects.get(pk=duty_id)
+        
+        # Step 3: verify no longer can refresh duty
+        with self.assertRaises(Duty.DoesNotExist):
+            duty.refresh_from_db()
 
     def test_delete_duty_with_user(self):
         """Test deleting duty with user will delete user object's reference
         to the duty.Accessing deleted duty from user will raise Duty.DoesNotExist exceptions.
         """
-        pass
+        user = self.generate_ihub_user()
 
-    def test_delete_empty_delegated_duty(self):
-        """Test deleting delegated duty from user to no one
+        # initially user has no duty
+        self.assertEqual(user.duty_set.count(), 0)
+
+        # user create his own duty
+        duty = user.duty_set.create()
+        duty_id = duty.id
+
+        # verify user has one duty
+        self.assertEqual(user.duty_set.count(), 1)
+
+        # verify duty is associated with user
+        self.assertEqual(duty.user, user)
+
+        # Step 1: delete duty
+        duty.delete()
+
+        # Step 2: query user's duty pk=duty_id, then expect Duty.DoesNotExist
+        with self.assertRaises(Duty.DoesNotExist):
+            user.duty_set.get(pk=duty_id)
+        
+        # Step 3: verify user has 0 duty
+        self.assertEqual(user.duty_set.count(), 0)
+
+    def test_delete_anonymous_duty_debt(self):
+        """Test deleting debted duty from debtee to anonymous user.
         """
-        pass
+        debtee = self.generate_ihub_user()
+
+        # initially debtee has no debt
+        self.assertEqual(debtee.duty_debt_set.count(), 0)
+
+        # debtee create a duty debt
+        duty_debt = debtee.duty_debt_set.create()
+        duty_id = duty_debt.id
+
+        # verify debtee has one debt
+        self.assertEqual(debtee.duty_debt_set.count(), 1)
+
+        # verify debt is associated with debtee
+        self.assertEqual(duty_debt.debtee, debtee)
+
+        # Step 1: delete debt duty
+        duty_debt.delete()
+
+        # Step 2: query debtee's debt pk=duty_id, then expect Duty.DoesNotExist
+        with self.assertRaises(Duty.DoesNotExist):
+            debtee.duty_debt_set.get(pk=duty_id)
+        
+        # Step 3: verify debtee has 0 debt
+        self.assertEqual(debtee.duty_debt_set.count(), 0)
+    
+    def test_delete_multiple_duty(self):
+        """Test deleting several duty debt which are indebted to user/debtor
+        and duty of user's own.
+        """
+        user = self.generate_ihub_user()
+        debtee1 = self.generate_ihub_user()
+        debtee2 = self.generate_ihub_user()
+
+        # initially debtee has no debt
+        self.assertEqual(debtee1.duty_debt_set.count(), 0)
+        self.assertEqual(debtee2.duty_debt_set.count(), 0)
+
+        # Step1: user (debtor) create and has his own duty
+        duty = user.duty_set.create()
+        self.assertEqual(user.duty_set.count(), 1)
+
+        # Step2: debtees create duty debts
+        duty1 = debtee1.duty_debt_set.create()
+        duty2 = debtee2.duty_debt_set.create()
+
+        # Step3: user (debtor) buy the debts
+        user.duty_set.add(duty1, duty2)
+
+        # verify user has 3 duties, debtee each has 1 debt
+        self.assertEqual(user.duty_set.count(), 3)
+        self.assertEqual(debtee1.duty_debt_set.count(), 1)
+        self.assertEqual(debtee2.duty_debt_set.count(), 1)
+
+        # Step 4: delete duty1 & duty2
+        # TODO: continue
 
     #########################################################################################
 
