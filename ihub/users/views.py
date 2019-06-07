@@ -47,7 +47,7 @@ class HomeView(LoginRequiredMixin, DetailView):
 
 
 ########################################
-# Sign up 
+# Sign up
 ########################################
 
 def signup(request):
