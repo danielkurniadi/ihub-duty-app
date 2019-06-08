@@ -25,3 +25,8 @@ class CannotClearUnfinishedDuty(Exception):
             " Either wait for duty to finish at %s or force clear." % duty_end)
         super().__init__(self.message)
 
+
+class MaxDutyCountError(Exception):
+    def __init__(self):
+        self.message = "Maximum duty count handled by manager is reached. Cannot add more duty."
+        super().__init__(self.message)
