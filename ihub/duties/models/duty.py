@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from duties.models.duty_manager import DutyManager
+
 User = get_user_model()
 
 
@@ -20,10 +22,13 @@ class Duty(models.Model):
     DUTY_DURATION = 180
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, 
-        blank=True, null=True)
+        blank=True, null=True) # duty_set
 
     debtee = models.ForeignKey(User, on_delete=models.SET_NULL,
         blank=True, null=True, related_name='duty_debt_set')
+
+    manager = models.ForeignKey(DutyManager, on_delete=models.SET_NULL,
+        blank=True, null=True, related_name='active_duties')
 
     duty_start = models.DateTimeField(editable=False)
     task1_start = models.DateTimeField(editable=False)
