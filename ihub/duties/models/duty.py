@@ -105,3 +105,4 @@ class Duty(models.Model):
             self.task3_end = duty_end
         # finally update the duty_end
         self.duty_end = duty_end
+        self.save()
