@@ -16,7 +16,7 @@ class DutyManager(SingletonModel):
     # Active Duty
     ########################################
 
-    def start_duty(self, user, verbose=False):
+    def start_duty(self, user, debtee=None, verbose=False):
         # check MAX_DUTY threshold condition
         if self.duties_count() < DutyManager.MAX_DUTY:
            duty = self.active_duties.create()
