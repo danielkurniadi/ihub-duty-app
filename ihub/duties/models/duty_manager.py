@@ -13,21 +13,19 @@ class DutyManager(SingletonModel):
     MAX_DUTY = 1
 
     ########################################
-    # Active Duty
+    # Active Duties
     ########################################
 
-    def start_duty(self, user, debtee=None, verbose=False):
+    def start_duty(self, user, debtee=None):
         # check MAX_DUTY threshold condition
         if self.duties_count() < DutyManager.MAX_DUTY:
            duty = self.active_duties.create()
            user.duty_set.add(duty)
            user.save(); duty.save()
            return duty
-        # MAX_DUTY condition fail, raise error if verbose
-        if verbose:
-            raise MaxDutyCountError
-        return None
-    
+        # MAX_DUTY condition fail, raise error
+        raise MaxDutyCountError
+
     def filter_finished_duties(self):
         # filter duties which end has passed
         finished_duties = self.active_duties.filter(duty_end__lte=timezone.now())
@@ -41,17 +39,22 @@ class DutyManager(SingletonModel):
         # remove all relationships to finished duties w/o deleting object
         if finished_duties:
             self.active_duties.remove(*finished_duties, bulk=True)
-        return finished_duties
+        return finished_duties # tuple
 
-    def remove_duty_of(self, user):
-        if user.duty_set.count() == 0:
-            return tuple()
+    def get_duties_of(self, user):
         user_active_duties = tuple(
             duty for duty in self.active_duties.filter(user__email=user.email)
         )
+        return user_active_duties # tuple
+
+    def remove_duties_of(self, user):
+        if user.duty_set.count() == 0:
+            return tuple()
+        user_active_duties = self.get_duties_of(user)
+        # remove if any duty of user in manager 
         if user_active_duties:
             self.active_duties.remove(*user_active_duties, bulk=True)
-        return user_active_duties
+        return user_active_duties # tuple
 
     ########################################
     # Onduty User
