@@ -18,11 +18,11 @@ class CannotStartOverOngoingDuty(Exception):
         super().__init__(self.message)
 
 
-class CannotClearUnfinishedDuty(Exception):
+class UnfinishedDutyError(Exception):
     def __init__(self, duty_end=None):
-        duty_end = "|UNKNOWN|" if not duty_end else "|{: %d %b %Y, %H:%M:%S}|".format(duty_end)
-        self.message = ("Ongoing duty hasn't reach the duty end time."
-            " Either wait for duty to finish at %s or force clear." % duty_end)
+        duty_end = "|UNKNOWN TIME|" if not duty_end else "|{: %d %b %Y, %H:%M:%S}|".format(duty_end)
+        self.message = ("User's ongoing duty hasn't reach the duty end time but try to create new duty."
+            "Finish user's active duty first!" % duty_end)
         super().__init__(self.message)
 
 
