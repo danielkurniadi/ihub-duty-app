@@ -249,6 +249,18 @@ class DutyTests(TestCase, RandomSupport):
         # Step 4: delete duty1 & duty2
         # TODO: continue
 
+    def test_duty_remove_user_relation(self):
+        """Tests removing duty foreign key from user manager works.
+        Duty still need to refresh db.
+        """
+        pass
+
+    def test_duty_remove_debtee_relation(self):
+        """Tests removing duty foreign key from a debtee's user manager works.
+        Duty still need to refresh db.
+        """
+        pass
+
     #########################################################################################
 
     def generate_ihub_user(self, email=None, matric=None, password=None):
