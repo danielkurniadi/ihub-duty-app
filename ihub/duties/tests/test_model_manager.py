@@ -18,6 +18,51 @@ class DutyManagerTests(TestCase, RandomSupport):
     def setUp(self):
         pass
 
+    def test_manager_singularity_creation(self):
+        """Test manager model is a singular db model, and load() will give same reference to
+        the db row in manager table, hence ORM objects of manager have the same state everywhere.
+        """
+        # Step 1: initialise duty_manager1 & duty_manager2
+        duty_manager1 = DutyManager.load()
+        duty_manager2 = DutyManager.load()
+
+        # Step 1b: verify duty_manager1 and duty_manager2 has no active_duties
+        self.assertEqual(duty_manager1.active_duties.count(), 0)
+        self.assertEqual(duty_manager2.active_duties.count(), 0)
+
+        # Step 1c: check both refer to the same row by id
+        self.assertEqual(duty_manager1, duty_manager2)
+        self.assertEqual(duty_manager1.id, 1)
+        self.assertEqual(duty_manager2.id, 1)
+
+        # Step 2: modify duty_manager1 by adding active duty
+        duty1 = duty_manager1.active_duties.create()
+
+        # Step 2b: verify duty_manager1 associated with duty1 and 
+        # duty_manager2 has duty1 as well (no need refresh_from_db)
+        self.assertEqual(duty_manager1.active_duties.count(), 1)
+        self.assertEqual(duty_manager2.active_duties.count(), 1)
+        self.assertTrue(duty_manager2.active_duties.filter(pk=duty1.id).exists())
+
+        # Step 3: create duty_manager3
+        duty_manager3 = DutyManager.load()
+
+        # Step 3b: verify duty_manager3 has duty1 as well.
+        self.assertEqual(duty_manager3.active_duties.count(), 1)
+        self.assertTrue(duty_manager3.active_duties.filter(pk=duty1.id).exists())
+
+        # Step 4: remove duty1
+        duty_manager1.active_duties.remove(duty1)
+        self.assertEqual(duty_manager1.active_duties.count(), 0)
+
+        # Step 4b: verify other manager also updated and lost association to duty1
+        self.assertEqual(duty_manager2.active_duties.count(), 0)
+        self.assertEqual(duty_manager3.active_duties.count(), 0)
+
+        # Step 4c: create one more manager and verify
+        duty_manager4 = DutyManager.load()
+        self.assertEqual(duty_manager4.active_duties.count(), 0)
+
     def test_manager_start_duty(self):
         """Test given a user, manager is able to start a duty with that user.
         Foreign key relations are formed between user-duty and duty-manager.
@@ -184,3 +229,5 @@ class DutyManagerTests(TestCase, RandomSupport):
         self.assertEqual(duty.task2_end, duty.task2_start + task_window)
         self.assertEqual(duty.task3_end, duty.task3_start + task_window)
 
+    def tearDown(self):
+        pass
