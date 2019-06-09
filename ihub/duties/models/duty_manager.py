@@ -69,3 +69,10 @@ class DutyManager(SingletonModel):
 	def is_onduty(self, user):
 		onduty_users = self.get_onduty_users()
 		return (user in onduty_users)
+
+	########################################
+	# General Methods
+	########################################
+
+	def reset(self):
+		self.active_duties.clear()
