@@ -5,6 +5,9 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 from utils import RandomSupport
+from duties.errors import (
+    MaxDutyCountError, UnfinishedDutyError
+)
 from duties.models import (
     Duty, DutyManager
 )
@@ -64,11 +67,12 @@ class DutyManagerTests(TestCase, RandomSupport):
         self.assertEqual(duty_manager4.active_duties.count(), 0)
 
     def test_manager_start_duty(self):
-        """Test given a user, manager is able to start a duty with that user.
+        """Test given a user, manager is able to start a duty if MAX_DUTY condition fulfilled.
         Foreign key relations are formed between user-duty and duty-manager.
         """
         # Step 1: initialise user & duty manager
         user = self.generate_ihub_user()
+        user2 = self.generate_ihub_user()
         duty_manager = DutyManager.load()
 
         # Step 1b: verify duty is empty initially
@@ -84,6 +88,10 @@ class DutyManagerTests(TestCase, RandomSupport):
 
         # Step 3b: verify user associated to duty in duty manager
         self.assertEqual(duty, duty_manager.get_duties_of(user)[0])
+
+        # Step 4: start one more duty, verify MAX_DUTY is respected. Hence raise error
+        with self.assertRaises(MaxDutyCountError):
+            duty2 = duty_manager.start_duty(user2)
 
     def test_manager_start_duty_with_debtee(self):
         """Test given a user buying duty debt from debtee, manager is able to
@@ -122,7 +130,7 @@ class DutyManagerTests(TestCase, RandomSupport):
         duty4 = Duty.objects.create()
         duty_manager = DutyManager.load()
 
-        # Step 1b: associate duties with duty manager as active duties
+        # Step 1b: associate duties with duty manager as active duties and bypass MAX_DUTY condition
         duty_manager.active_duties.add(duty1, duty2, duty3, duty4,
             bulk=True)
         
@@ -152,7 +160,7 @@ class DutyManagerTests(TestCase, RandomSupport):
         duty4 = Duty.objects.create()
         duty_manager = DutyManager.load()
 
-        # Step 1b: associate duties with duty manager as active duties
+        # Step 1b: associate duties with duty manager as active duties and bypass MAX_DUTY condition
         duty_manager.active_duties.add(duty1, duty2, duty3, duty4,
             bulk=True)
         
@@ -172,6 +180,36 @@ class DutyManagerTests(TestCase, RandomSupport):
         # Step 3c: verify unfinished duties are still associated with duty manager
         self.assertIn(duty3, duty_manager.active_duties.all())
         self.assertIn(duty4, duty_manager.active_duties.all())
+
+    def test_manager_verify_onduty_users(self):
+        """Test given several active duties in manager associated by some users, manager is able to
+        get the users of active duties and tell if user(s) has active duties in manager.
+        """
+        # Step 1: create 3 users and duty manager
+        user1 = self.generate_ihub_user()
+        user2 = self.generate_ihub_user()
+        user3 = self.generate_ihub_user()
+        duty_manager = DutyManager.load()
+        
+        # Step 2: create 2 duties associated to manager and bypass MAX_DUTY condition
+        duty1 = user1.duty_set.create()
+        duty2 = user2.duty_set.create()
+        duty3 = user3.duty_set.create() # junk duty
+        duty_manager.active_duties.add(duty1, duty2, bulk=True)
+
+        # Step 2b: verify duty manager has 2 duties
+        self.assertEqual(duty_manager.active_duties.count(), 2)
+        
+        # Step 3: check get_onduty_user_ids
+        onduty_user_ids = duty_manager.get_onduty_user_ids()
+        self.assertIn(user1.id, onduty_user_ids)
+        self.assertIn(user2.id, onduty_user_ids)
+        self.assertNotIn(user3.id, onduty_user_ids)
+
+        # Step 4: check is_onduty method
+        self.assertTrue(duty_manager.is_onduty(user1))
+        self.assertTrue(duty_manager.is_onduty(user2))
+        self.assertFalse(duty_manager.is_onduty(user3))
 
     #########################################################################################
 
