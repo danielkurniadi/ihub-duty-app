@@ -24,5 +24,7 @@ urlpatterns = [
     # users login, signup, logout, and page
     path('', redirect_login),
     path('logout', LogoutView.as_view(next_page='/'), name='logout'),
-    path('accounts/', include('users.urls'))
+    path('accounts/', include('users.urls')),
+    # duties start and details
+    path('duties/', include('duties.urls')),
 ]
