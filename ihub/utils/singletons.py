@@ -1,4 +1,4 @@
-from django.db.models import models
+from django.db import models
 
 class Singleton(object):
     instance = None

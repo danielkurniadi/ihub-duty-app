@@ -246,8 +246,56 @@ class DutyTests(TestCase, RandomSupport):
         self.assertEqual(debtee1.duty_debt_set.count(), 1)
         self.assertEqual(debtee2.duty_debt_set.count(), 1)
 
-        # Step 4: delete duty1 & duty2
-        # TODO: continue
+        # Step 4: delete duty1 and verify debtee1 not associated with duty1
+        duty1_id = duty1.id
+        duty1.delete()
+        self.assertFalse(debtee1.duty_debt_set.filter(pk=duty1_id).exists())
+
+        # Step 4b: delete duty2 and verify debtee2 not associated with duty2
+        duty2_id = duty2.id
+        duty2.delete()
+        self.assertFalse(debtee2.duty_debt_set.filter(pk=duty2_id).exists())
+
+        # Step 4c: verify user back to 1 duty
+        self.assertEqual(user.duty_set.count(), 1)
+        self.assertTrue(user.duty_set.filter(pk=duty.id).exists())
+
+    def test_duty_remove_user_relation(self):
+        """Tests removing duty foreign key from user manager works.
+        Duty still need to refresh db.
+        """
+        user = self.generate_ihub_user()
+        duty = user.duty_set.create()
+
+        # Step 1: initially duty is associated with user
+        self.assertEqual(user.duty_set.count(), 1)
+        self.assertTrue(user.duty_set.filter(pk=duty.id).exists())
+        self.assertEqual(duty.user, user)
+
+        # Step 2: remove duty
+        user.duty_set.remove(duty)
+
+        # Step 2b: verify duty still exists in db
+        duty.refresh_from_db() # Important!
+        self.assertIsNotNone(duty)
+
+        # Step 2c: verify user is not associated with duty
+        self.assertEqual(user.duty_set.count(), 0)
+        self.assertFalse(user.duty_set.filter(pk=duty.id).exists())
+
+        # Step 2d: verify duty has no user:
+        self.assertIsNone(duty.user) # Need to refresh duty from db!
+
+    def test_duty_remove_debtee_relation(self):
+        """Tests removing duty foreign key from a debtee's user manager works.
+        Duty still need to refresh db.
+        """
+        debtee = self.generate_ihub_user()
+        duty = debtee.duty_debt_set.create()
+
+        # Step 1: initially duty debt is associated with debtee
+        self.assertEqual(debtee.duty_debt_set.count(), 1)
+        
 
     #########################################################################################
 
