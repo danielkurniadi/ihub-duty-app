@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 from utils import RandomSupport
-from duties.errors import (
+from bridge.constants.errors import (
     MaxDutyCountError, UnfinishedDutyError
 )
 from duties.models import (

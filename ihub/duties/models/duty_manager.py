@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from utils.singletons import SingletonModel
-from duties.errors import (
+from bridge.constants.errors import (
 	MaxDutyCountError, UnfinishedDutyError
 )
 
