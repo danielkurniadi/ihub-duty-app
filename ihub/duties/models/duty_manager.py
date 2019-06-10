@@ -24,7 +24,8 @@ class DutyManager(SingletonModel):
 			raise MaxDutyCountError
 		# check user has no active duty before
 		if self.is_onduty(user):
-			raise UnfinishedDutyError
+			duty_end = self.get_duties_of(user)[0].duty_end # take the first active
+			raise UnfinishedDutyError(duty_end=duty_end)
 
 		duty = self.active_duties.create()
 		user.duty_set.add(duty)
