@@ -1,4 +1,4 @@
-# GTD Service
+# iHub Web Service
 
 ## Requirements
 
