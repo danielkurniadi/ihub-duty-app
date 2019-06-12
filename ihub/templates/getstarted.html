@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.5">
+    <title>iHub · Bootstrap</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/navbar-static/">
+
+    {% load static %}
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom Style CSS -->
+    <style>
+        body {
+            min-height: 60rem;
+    	}
+
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <a class="navbar-brand" href="#">Top navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+        </li>
+        </ul>
+        <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+  </div>
+</nav>
+
+<div id="dutyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Before you started,</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- I'm Subtituting -->
+        <h5>I'm Subtituting...</h5>
+        <p>If you're subtituting someone in his/her duty, please specify the matric no. of your friend. We will clock this time on behalf of your friend instead of you.
+          Read here if you want to know more about <a href="#" class="tooltip-test" title="README">Subtituting on Other's Duty</a> or 
+          <a href="#" class="tooltip-test" title="+65 82467547">contact Ms.Clara</a>.
+        </p>
+        <h6>Enter your friend's matric number:</h6>
+        <form>
+          <div class="form-row align-items-center">
+            <div class="col-sm-4 my-1">
+              <label class="sr-only" for="inlineFormInputName">Name</label>
+              <input type="text" class="form-control" name="matric" placeholder="Friend's Matric Number" maxlength="10">
+            </div>
+            <!-- <div class="col-auto my-1">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div> -->
+          </div>
+        </form>
+        <hr>
+        <!-- I'm me -->
+        <h5>I'm on My Own Duty!</h5>
+        <p>If you're not subtituting anybody and you come for your own duty, just go ahead and ignore the above detail. We will get your duty recorded for your payment.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="startduty" class="btn btn-primary">Start now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Begin page content -->
+<main role="main" class="flex-shrink-0">
+  <div class="container">
+    <h1 class="display-4">Get Started with iHub Web Platform</h1>
+    <hr class="my-4">
+    <p class="lead">Start your EEE day in our <code>iHub</code>. Ping a friend to study with you or bring your favorite headset to enter your <code>hermit mode;</code> 
+      Whether it's a <code>&lt;code_marathon&gt;</code> day or a peaceful study, personalise your space at <code>iHub</code></p>
+    <p>Back to <a href="#">iHub student homepage</a> or proceed as iHub guardian here:</p>
+  </div>
+</main>
+
+<main role="main" class="container">
+  <div class="jumbotron js-signin-modal-trigger">
+		<h1 class="display-4">Ready Player One...</h1>
+		<hr class="my-4">
+    <p class="lead">This is a portal to iHub duty session. If you're registered as <a href="#">iHub guardian</a> for this semester, you're welcomed to proceed.
+      The duty session will be 3 hours by default. Ready??
+    </p>
+    <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#dutyModal" role="button">Ready launch duty &raquo;</button>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script>
+// ajaxSetup
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+$(function(){
+	
+
+	// function startduty onclick
+	$('#startduty').click(function(){
+        var matric_val = $("input[name='matric']").val();
+        var _data = {}
+        // check if matric is filled
+        if (matric_val != ''){
+            _data = {
+                debtee: {
+                    matric: matric_val
+                }
+            };
+        }
+		$.ajax({
+			type: "POST",
+			contentType: 'application/json',
+			url: "{% url 'duties:duty-create' %}",
+			data: _data,
+			dataType: 'json',
+			success: function(data){
+				var res = JSON.parse(data)
+        console.log("matric", matric_val)
+				console.log(res)
+        // redirect to active duty page
+        window.location.reload();
+			},
+			error: function(xhr, status, error){
+				var errorMessage = xhr.status + ': ' + xhr.statusText
+				var res = JSON.parse(xhr.response)
+				alert('Error - ' + errorMessage);        
+        console.log("matric", matric_val);
+				console.log(res);
+			}
+		});
+	});
+});
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+</script>
+</body>
+</html>

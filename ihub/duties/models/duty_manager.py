@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from utils.singletons import SingletonModel
-from duties.errors import (
+from bridge.constants.errors import (
 	MaxDutyCountError, UnfinishedDutyError
 )
 
@@ -69,10 +69,12 @@ class DutyManager(SingletonModel):
 	########################################
 
 	def get_onduty_user_ids(self):
+		self.remove_finished_duties() #TODO: @db_refresh decorators
 		onduty_user_ids = self.active_duties.values_list('user') # QuerySet<[(pk,), (pk,), ...]>
 		return map(lambda tup: tup[0], onduty_user_ids)
 
 	def is_onduty(self, user):
+		self.remove_finished_duties() #TODO: @db_refresh decorators
 		onduty_user_ids = self.get_onduty_user_ids() # map object
 		return (user.id in onduty_user_ids)
 

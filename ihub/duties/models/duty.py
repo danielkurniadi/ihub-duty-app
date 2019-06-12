@@ -47,7 +47,7 @@ class Duty(models.Model):
     ########################################
 
     def save(self, *args, **kwargs):
-        now = timezone.now()
+        now = timezone.localtime()
         # Creation
         if not self.id:
             # starting marker

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 from users.forms import SignUpForm
 
@@ -23,15 +24,13 @@ def redirect_login(request):
 
     # ERROR for other method
     else:
-        return Response(
+        return JsonResponse(
             {
                 'success': False,
-                'message': "Cannot process this endpoint with %s request method"
-                    % (request.method),
+                'message': "Cannot process this endpoint with %s request method" % (request.method)
             }, 
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
+            status=405
         )
-
 
 ########################################
 # User pages
