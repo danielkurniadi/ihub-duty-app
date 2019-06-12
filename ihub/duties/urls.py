@@ -8,7 +8,7 @@ from .views import (
 app_name = 'duties'
 
 page_urlpath = [
-    path('page', duty_template_view, name='duty-page'),
+    path('page/', duty_template_view, name='duty-page'),
 ]
 
 api_urlpath = [
