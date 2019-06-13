@@ -70,6 +70,127 @@
         <p class="lead">This example is a quick exercise to illustrate how the top-aligned navbar works. As you scroll, this navbar remains in its original position and moves with the rest of the page.</p>
         <a id="getduty" class="btn btn-lg btn-primary" href="#" role="button">View navbar docs &raquo;</a>
       </div>
+      
+      <!-- Active Task 1 -->
+      <div id="task-active-7558" class="my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Task: Act of Conscent</h6>
+        <small class="text-left mt-3">
+          Status: Pending
+        </small>
+        <div class="card text-center collapse show" style="border:none">
+          <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+              <a class="btn btn-outline-primary submitTaskBtn" href="">I Agree</a>
+              <a href="" class="btn btn-outline-secondary">Read Policy</a>
+          </div>
+        </div>
+          <small class="d-block text-right mt-3">
+              <a href="" class="collapseBtn">Collapse >></a>
+          </small>
+      </div>
+
+      <!-- Complete Task 1 -->
+      <div id="task-completed-7558" class="completion my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Task: Act of Conscent</h6>
+        <small class="text-left mt-3 text-success">
+          Status: Completed
+        </small>
+        <div class="card text-center collapse show" style="border:none">
+          <div class="card-body">
+            <h5 class="card-title">Task completed</h5>
+            <p class="card-text">This section has been completed by user <i class="far fa-check-circle text-success"></i></p>
+          </div>
+        </div>
+          <small class="d-block text-right mt-3">
+          <a href="" class="collapseBtn">Collapse >></a>
+        </small>
+      </div>
+
+      <!-- Active Task 2 -->
+      <div id="task-active-7560" class="my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Task: Duty Report</h6>
+        <small class="text-left mt-3">
+          Status: Pending
+          <br><br>
+        </small>
+        <div class="card collapse show" style="border:none">
+          <form>
+            <div class="form-group row">
+            <div class="col-sm-3">I have ensured the following:</div>
+              <div class="col-sm-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Sign in and out my attendance
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Be present in i-Hub during the tour of duty
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Shut down PC properly after closing (11:00 pm)
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                    Ensure all keyboards , mouse, and chairs all orderly arranged before closure
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Record left items found in record book
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Report any happening that needs the attention of staff <br> (Thomas: 96797237)
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                <label class="form-check-label" for="gridCheck1">
+                  Switch off all lightings before leaving; Ensure the two doors are electronically secured
+                </label>
+              </div>
+            </div>
+            </div><br>
+            <div class="form-group row">
+              <div class="text-center col-sm-11">
+              <button type="submit" class="btn btn-outline-primary submitTaskBtn">I acknowledge</button>
+              </div>
+            </div>
+          </form>
+        </div>
+          <small class="d-block text-right mt-3">
+          <a href="" class="collapseBtn">Collapse >></a>
+        </small>
+      </div>
+
+      <!-- Complete Task 2 -->
+      <div id="task-completed-7560" class="completion my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Tasks: Duty Report</h6>
+        <small class="text-left mt-3 text-success">
+          Status: Completed
+        </small>
+        <div class="card text-center collapse show" style="border:none">
+          <div class="card-body">
+            <h5 class="card-title">Task completed</h5>
+            <p class="card-text">This section has been completed by user <i class="far fa-check-circle text-success"></i></p>
+          </div>
+        </div>
+        <small class="d-block text-right mt-3">
+          <a class="collapseBtn" href="">Collapse >></a>
+        </small>
+      </div>
     </main>
 
 <!-- Bootstrap core JavaScript
@@ -78,7 +199,8 @@
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="./clock.js"></script>
+<script src="{% static 'js/internal/clock.js' %}"></script>
+<script src="{% static 'js/internal/cards.js' %}"></script>
 <!-- AJAX Request -->
 <script>
 $(function(){
@@ -104,5 +226,12 @@ $(function(){
 	});
 });
 </script>
-  </body>
+<!-- Task Card Elements -->
+<script>
+const task1 = {active: "#task-active-7558", completed:"#task-completed-7558"};
+const task2 = {active: "#task-active-7560", completed:"#task-completed-7560"};
+handleTaskCardsDisplay([task1, task2]);
+</script>
+
+</body>
 </html>
