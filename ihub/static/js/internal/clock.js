@@ -1,4 +1,3 @@
-
 // main function
 function dutyClock(serverNow, duty_end){
     var t = getDateTime(duty_end) - getDateTime(serverNow);
@@ -46,15 +45,12 @@ function durationToRepresentation(duration){
 };
 
 function getDateTime(datetime){
-    var [date, time] = datetime.split(" ");
-    var date = date.split("/");
-    var time = time.split(":");
-    var result = new Date(parseInt(date[2], 10),
-                    parseInt(date[1], 10) - 1,
-                    parseInt(date[0], 10),
-                    parseInt(time[0], 10),
-                    parseInt(time[1], 10),
-                    parseInt(time[2], 10)
-                    );
+    const [date, time] = datetime.split(" ")
+    const [mon, day, year] = date.split("/").map(e=>parseInt(e, 10));
+    const [hour, min, sec] = time.split(":").map(e=>parseInt(e, 10));;
+    var result = new Date(
+        year, mon-1, day,
+        hour, min, sec
+    );
     return result
 };
