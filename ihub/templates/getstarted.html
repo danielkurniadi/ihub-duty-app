@@ -123,7 +123,6 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script>window.jQuery || document.write('<script src="/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script>
 // ajaxSetup
@@ -140,8 +139,6 @@ $.ajaxSetup({
 });
 
 $(function(){
-	
-
 	// function startduty onclick
 	$('#startduty').click(function(){
         var matric_val = $("input[name='matric']").val();
@@ -161,18 +158,14 @@ $(function(){
 			data: _data,
 			dataType: 'json',
 			success: function(data){
-				var res = JSON.parse(data)
-        console.log("matric", matric_val)
-				console.log(res)
         // redirect to active duty page
-        window.location.reload();
+        location.href = "{% url 'duties:duty-page' %}";
 			},
 			error: function(xhr, status, error){
 				var errorMessage = xhr.status + ': ' + xhr.statusText
-				var res = JSON.parse(xhr.response)
-				alert('Error - ' + errorMessage);        
+        // log error
         console.log("matric", matric_val);
-				console.log(res);
+				console.log(errorMessage);
 			}
 		});
 	});
