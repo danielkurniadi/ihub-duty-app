@@ -5,19 +5,27 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from utils.singletons import SingletonModel
+from bridge.decorators import manager_refresh
 from bridge.constants.errors import (
 	MaxDutyCountError, UnfinishedDutyError
 )
 
 User = get_user_model()
 
-class DutyManager(SingletonModel):
+class ManagerMixin(object):
+	"""Manager mixin contains basic manager capabilities and interfaces
+	"""
+	def refresh(self):
+		raise NotImplementedError
+
+class DutyManager(SingletonModel, ManagerMixin):
 	MAX_DUTY = 1
 
 	########################################
 	# Active Duties
 	########################################
 
+	@manager_refresh
 	def start_duty(self, user, debtee=None):
 		# check MAX_DUTY threshold condition
 		if self.active_duties.count() >= DutyManager.MAX_DUTY:
@@ -48,6 +56,7 @@ class DutyManager(SingletonModel):
 			self.active_duties.remove(*finished_duties, bulk=True)
 		return finished_duties # tuple
 
+	@manager_refresh
 	def get_duties_of(self, user):
 		user_active_duties = tuple(
 			duty for duty in self.active_duties.filter(user__email=user.email)
@@ -68,19 +77,21 @@ class DutyManager(SingletonModel):
 	# Onduty User
 	########################################
 
+	@manager_refresh
 	def get_onduty_user_ids(self):
-		self.remove_finished_duties() #TODO: @db_refresh decorators
 		onduty_user_ids = self.active_duties.values_list('user') # QuerySet<[(pk,), (pk,), ...]>
 		return map(lambda tup: tup[0], onduty_user_ids)
 
 	def is_onduty(self, user):
-		self.remove_finished_duties() #TODO: @db_refresh decorators
 		onduty_user_ids = self.get_onduty_user_ids() # map object
 		return (user.id in onduty_user_ids)
 
 	########################################
 	# General Methods
 	########################################
+
+	def refresh(self):
+		self.remove_finished_duties()
 
 	def reset(self):
 		self.active_duties.clear()
