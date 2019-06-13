@@ -17,24 +17,28 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Custom Style CSS -->
     <style>
-        body {
-            min-height: 60rem;
+      body {
+        min-height: 60rem;
     	}
 
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+      .completion{
+        display: none
+      }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
+      .bd-placeholder-img {
+          font-size: 1.125rem;
+          text-anchor: middle;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
         }
+      }
     </style>
   </head>
 
@@ -67,8 +71,7 @@
     <main role="main" class="container">
       <div class="jumbotron">
         <h1 class="display-3">Active CountDown</h1>
-        <p class="lead">This example is a quick exercise to illustrate how the top-aligned navbar works. As you scroll, this navbar remains in its original position and moves with the rest of the page.</p>
-        <a id="getduty" class="btn btn-lg btn-primary" href="#" role="button">View navbar docs &raquo;</a>
+        <p class="lead timer-display">Hi</p>
       </div>
       
       <!-- Active Task 1 -->
@@ -203,29 +206,31 @@
 <script src="{% static 'js/internal/cards.js' %}"></script>
 <!-- AJAX Request -->
 <script>
-$(function(){
-	// function startduty onclick
-	$('#getduty').click(function(){
-		$.ajax({
-			type: "GET",
-			contentType: 'application/json',
-			url: "{% url 'duties:duty-details' %}",
-			dataType: 'json',
-			success: function(data){
-				console.log(data);
-				// TODO: parse duty_end and now
-				// TODO: dutyClock(now, duty_end)
-			},
-			error: function(xhr, status, error){
-				var errorMessage = xhr.status + ': ' + xhr.statusText
-				// log error
-				console.log("matric", matric_val);
-				console.log(errorMessage);
-			}
-		});
-	});
-});
+
+function getDuty(){
+  $.ajax({
+    type: "GET",
+    contentType: 'application/json',
+    url: "{% url 'duties:duty-details' %}",
+    dataType: 'json',
+    success: function(data){
+      console.log(data)
+      const serverNow = data.now;
+      const duty_end = data.payload[0].duty_end;
+      dutyClock(serverNow, duty_end);
+    },
+    error: function(xhr, status, error){
+      var errorMessage = xhr.status + ': ' + xhr.statusText
+      // log error
+      console.log("matric", matric_val);
+      console.log(errorMessage);
+    }
+  });
+}
+
+getDuty();
 </script>
+
 <!-- Task Card Elements -->
 <script>
 const task1 = {active: "#task-active-7558", completed:"#task-completed-7558"};
