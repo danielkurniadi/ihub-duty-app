@@ -43,7 +43,7 @@ def duty_api_start_view(request):
             {
                 'success': False,
                 'message': e.message,
-                'now': timezone.localtime(),
+                'now': "{:%m/%d/%Y %H:%M:%S}".format(timezone.localtime()),
             },
             status=status.HTTP_400_BAD_REQUEST 
         )
@@ -55,7 +55,7 @@ def duty_api_start_view(request):
             'success': True,
             'message': "Object %s created successfully" % duty,
             'payload': serializer.data,
-            'now': timezone.localtime(),
+            'now': "{:%m/%d/%Y %H:%M:%S}".format(timezone.localtime()),
         },
         status=status.HTTP_201_CREATED
     )
@@ -73,7 +73,7 @@ def duty_api_detail_view(request):
             {
                 'success': False, 
                 'message': "User's duty is not registered in manager",
-                'now': timezone.localtime(),
+                'now': "{:%m/%d/%Y %H:%M:%S}".format(timezone.localtime()),
             },
             status=status.HTTP_400_BAD_REQUEST
         )
@@ -86,7 +86,7 @@ def duty_api_detail_view(request):
             'success': True,
             'message': "Duties sent. MAX_DUTY: %d" % DutyManager.MAX_DUTY,
             'payload': serializer.data,
-            'now': timezone.localtime(),
+            'now': "{:%m/%d/%Y %H:%M:%S}".format(timezone.localtime()),
         },
         status=status.HTTP_200_OK
     )
