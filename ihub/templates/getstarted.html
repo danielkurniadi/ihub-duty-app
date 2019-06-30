@@ -153,9 +153,9 @@ $(function(){
         }
 		$.ajax({
 			type: "POST",
-			contentType: 'application/json',
+			contentType: 'application/json; charset=utf-8',
 			url: "{% url 'duties:duty-create' %}",
-			data: _data,
+			data: JSON.stringify(_data),
 			dataType: 'json',
 			success: function(data){
         // redirect to active duty page
