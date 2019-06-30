@@ -21,6 +21,7 @@ from bridge.constants.errors import (
 User = get_user_model()
 duty_manager = DutyManager.load()
 
+
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 def duty_api_start_view(request):
@@ -30,14 +31,25 @@ def duty_api_start_view(request):
     user = request.user
     debtee = None
 
-    # check debtee data if specified
+    # check debtee data if specified, then if do
+    # also check if data exists/matches to any users other than the user
     debtee_params = request.data.get('debtee')
     if debtee_params:
         debtee = get_object_or_404(User, **debtee_params)
+        if debtee == user:
+            return Response({
+                'success': False,
+                'message': "Cannot specify yourself as in-debt friend. Do you mistype friend matric no. with yours?",
+                'now': "{:%m/%d/%Y %H:%M:%S}".format(timezone.localtime()),
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    # try start duty
+    # start duty with duty manager, user, and debtee(optional)
     try:
         duty = duty_manager.start_duty(user, debtee=debtee)
+
+    # failures
     except (UnfinishedDutyError,MaxDutyCountError) as e:
         return Response(
             {
@@ -48,7 +60,7 @@ def duty_api_start_view(request):
             status=status.HTTP_400_BAD_REQUEST 
         )
 
-    # Success
+    # success
     serializer = DutySerializer(duty)
     return Response(
         {
@@ -59,6 +71,7 @@ def duty_api_start_view(request):
         },
         status=status.HTTP_201_CREATED
     )
+
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
@@ -78,7 +91,7 @@ def duty_api_detail_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Success
+    # success
     duties = duty_manager.get_duties_of(user)
     serializer = DutySerializer(duties, many=True)
     return Response(
