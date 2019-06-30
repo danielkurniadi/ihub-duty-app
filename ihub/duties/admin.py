@@ -33,6 +33,9 @@ class DutyAdmin(admin.ModelAdmin):
         'task3_start', 'task3_end',
     ]
 
+class DutiesInline(admin.TabularInline):
+    model = Duty
+
 @admin.register(DutyManager)
 class DutyManagerAdmin(admin.ModelAdmin):
-    pass
+    inlines = [DutiesInline, ]
