@@ -66,22 +66,33 @@ class Duty(models.Model):
         return super(Duty, self).save(*args, **kwargs)
 
     ########################################
-    # Python native methods override
+    # Display Purposes
     ########################################
 
     def __str__(self):
         if not self.user:
-            return ("Zombie Duty Instance from time | {: %d %b %Y, %H:%M:%S} | to "
-            "| {: %d %b %Y, %H:%M:%S} |".format(self.duty_start, self.duty_end))
+            return ("{} Duty Instance | {: %d %b %Y, %H:%M:%S} | to "
+            "| {: %d %b %Y, %H:%M:%S} |".format(self.__status__(),
+            self.duty_start, self.duty_end))
 
         if self.is_finished():
-            return ("Past duty Instance from time | {: %d %b %Y, %H:%M:%S} | to "
-            "| {: %d %b %Y, %H:%M:%S} | by {}".format(
+            return ("{} duty Instance | {: %d %b %Y, %H:%M:%S} | to "
+            "| {: %d %b %Y, %H:%M:%S} | by {}".format(self.__status__(),
                 self.duty_start, self.duty_end, self.user.name))
 
-        return ("Active duty Instance from time |{: %d %b %Y, %H:%M:%S}| to "
-            "| {: %d %b %Y, %H:%M:%S} | by {}".format(
+        return ("{} duty Instance |{: %d %b %Y, %H:%M:%S}| to "
+            "| {: %d %b %Y, %H:%M:%S} | by {}".format(self.__status__(),
                 self.duty_start, self.duty_end, self.user.name))
+
+    def __status__(self):
+        if not self.user:
+            return "Zombie"
+        if self.is_finished():
+            return "Past/Over"
+        return "Active"
+    
+    __status__.short_description = 'Duty Status'
+    __status__.allow_tags = False
 
     ########################################
     # Duty methods
