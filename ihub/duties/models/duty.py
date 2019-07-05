@@ -78,11 +78,11 @@ class Duty(models.Model):
         if self.is_finished():
             return ("{} duty Instance | {: %d %b %Y, %H:%M:%S} | to "
             "| {: %d %b %Y, %H:%M:%S} | by {}".format(self.__status__(),
-                self.duty_start, self.duty_end, self.user.name))
+                self.duty_start, self.duty_end, self.user.email))
 
         return ("{} duty Instance |{: %d %b %Y, %H:%M:%S}| to "
             "| {: %d %b %Y, %H:%M:%S} | by {}".format(self.__status__(),
-                self.duty_start, self.duty_end, self.user.name))
+                self.duty_start, self.duty_end, self.user.email))
 
     def __status__(self):
         if not self.user:
