@@ -30,8 +30,8 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="#">iHubDepot</a>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{% url 'users:home' %}">iHubDepot</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -39,10 +39,10 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'users:home' %}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Duty</a>
+                <a class="nav-link" href="{% url 'duties:duty-page' %}">Duty</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" href="#">Support</a>
@@ -53,8 +53,6 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Accounts</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="#">Edit</a>
-                    <a class="dropdown-item" href="#">Settings</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Switch account</a>
                 </div>
             </li>
@@ -83,7 +81,7 @@
         <div class="col-md-4">
             <h2>Duty</h2>
             <p>Jumpy start your duty as the guardian of iHub. Help maintain peace in iHub using our new platform for fellow students and staffs for the greater good. Signup now and become the hero of our school!</p>
-            <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            <p><a class="btn btn-secondary" href="{% url 'duties:duty-page' %}" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Support</h2>
