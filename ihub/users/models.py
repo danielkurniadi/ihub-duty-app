@@ -83,4 +83,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 		return '/users/%i/' % (self.pk)
 
 	def __str__(self):
-		return "User of %s" % (self.name)
+		return "User of %s" % (self.email)
