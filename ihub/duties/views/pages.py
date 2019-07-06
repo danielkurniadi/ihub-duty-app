@@ -4,6 +4,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.db.utils import OperationalError
 
 from duties.serializers import DutySerializer
 from users.serializers import UserSerializer
@@ -12,7 +13,12 @@ from duties.models import (
 )
 
 User = get_user_model()
-duty_manager = DutyManager.load()
+
+try:
+    duty_manager = DutyManager.load()
+except:
+    pass
+
 
 @login_required
 def duty_template_view(request):

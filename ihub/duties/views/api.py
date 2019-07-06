@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.db.utils import OperationalError
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -19,8 +20,11 @@ from bridge.constants.errors import (
 )
 
 User = get_user_model()
-duty_manager = DutyManager.load()
 
+try:
+    duty_manager = DutyManager.load()
+except:
+    pass
 
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
